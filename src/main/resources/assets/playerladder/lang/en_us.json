@@ -1,0 +1,7 @@
+{
+  "title.playerladder.config": "PlayerLadder Config",
+  "rightClickMode.playerladder.config": "Right Click Mode",
+  "interactWithAnyLiving.playerladder.config": "Interact with any living",
+  "allowInteractions.playerladder.config": "Allow interactions when carrying an entity",
+  "rideExtension.playerladder.config": "/ride extension"
+}
