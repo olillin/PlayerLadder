@@ -8,14 +8,15 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Saddleable;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import ru.nern.playerladder.config.ServerConfig;
+
 
 public class SharedHandler {
     public static InteractionResult startRidingEntity(Player player, Entity newVehicle, Level level, InteractionHand hand) {
         if(!level.isClientSide() && hand == InteractionHand.MAIN_HAND && canInteractWith(newVehicle) && player.getItemInHand(hand).isEmpty()) {
-            Entity vehicle = newVehicle;
 
-            while (vehicle.isVehicle() && vehicle.getFirstPassenger() != player)
-                vehicle = vehicle.getFirstPassenger();
+            Entity vehicle = getHighestOrSelf(newVehicle, player, ServerConfig.stepUpLimit);
+            if(vehicle == null) return InteractionResult.FAIL;
             player.startRiding(vehicle);
 
             return InteractionResult.SUCCESS;
@@ -24,11 +25,10 @@ public class SharedHandler {
     }
 
     public static InteractionResult pickUpEntity(Player player, Entity newPassenger, Level level, InteractionHand hand) {
-        if(!level.isClientSide() && hand == InteractionHand.MAIN_HAND && canInteractWith(newPassenger) && player.getItemInHand(hand).isEmpty() && player.getFirstPassenger() != newPassenger) {
-            Entity vehicle = player;
+        if(!level.isClientSide() && hand == InteractionHand.MAIN_HAND && canInteractWith(newPassenger) && player.getItemInHand(hand).isEmpty()) {
 
-            while (vehicle.isVehicle() && vehicle.getFirstPassenger() != player)
-                vehicle = vehicle.getFirstPassenger();
+            Entity vehicle = getHighestOrSelf(player, newPassenger, ServerConfig.pickUpLimit);
+            if(vehicle == null) return InteractionResult.FAIL;
             newPassenger.startRiding(vehicle);
 
             return InteractionResult.SUCCESS;
@@ -36,8 +36,18 @@ public class SharedHandler {
         return InteractionResult.PASS;
     }
 
+    private static Entity getHighestOrSelf(Entity vehicle, Entity newPassenger, int limit) {
+        int count = -1;
+        while (vehicle.isVehicle()) {
+            count++;
+            vehicle = vehicle.getFirstPassenger();
+            if(vehicle == newPassenger || count >= limit) return null;
+        }
+        return vehicle;
+    }
+
     private static boolean canInteractWith(Entity entity) {
-        return Config.interactWithAnyLiving && !(entity instanceof Saddleable) || entity instanceof Player;
+        return ServerConfig.interactWithAnyLiving && !(entity instanceof Saddleable) || entity instanceof Player;
     }
 
     public static void onMount(Entity vehicle, Entity passenger) {
@@ -50,7 +60,6 @@ public class SharedHandler {
         if(!vehicle.level().isClientSide && vehicle instanceof Player)
             ((ServerPlayer) vehicle).connection.send(new ClientboundSetPassengersPacket(vehicle));
     }
-
 
     public static void onPlayerTick(Player player) {
         if(!player.level().isClientSide && player.onGround() && player.isVehicle() && player.isCrouching())

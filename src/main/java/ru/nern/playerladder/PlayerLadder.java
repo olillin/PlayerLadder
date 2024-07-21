@@ -10,6 +10,8 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import ru.nern.playerladder.config.ClientConfig;
+import ru.nern.playerladder.config.ServerConfig;
 
 @Mod(PlayerLadder.MODID)
 public class PlayerLadder
@@ -19,7 +21,7 @@ public class PlayerLadder
     public PlayerLadder(IEventBus modEventBus, ModContainer modContainer)
     {
         NeoForge.EVENT_BUS.register(this);
-        modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+        modContainer.registerConfig(ModConfig.Type.COMMON, ServerConfig.SPEC);
         modContainer.registerConfig(ModConfig.Type.CLIENT, ClientConfig.SPEC);
     }
 
@@ -30,7 +32,7 @@ public class PlayerLadder
 
     @SubscribeEvent
     public void onPlayerInteract(PlayerInteractEvent.EntityInteract event) {
-        event.setCancellationResult(switch (Config.mode) {
+        event.setCancellationResult(switch (ServerConfig.mode) {
             case RIDE -> SharedHandler.startRidingEntity(event.getEntity(), event.getTarget(), event.getLevel(), event.getHand());
             case PICK_UP -> SharedHandler.pickUpEntity(event.getEntity(), event.getTarget(), event.getLevel(), event.getHand());
             case DO_NOTHING -> InteractionResult.PASS;
