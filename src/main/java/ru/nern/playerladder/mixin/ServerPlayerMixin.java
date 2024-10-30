@@ -10,9 +10,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import ru.nern.playerladder.SharedHandler;
 
 @Mixin(ServerPlayer.class)
-public class ServerPlayerMixin {
+public abstract class ServerPlayerMixin extends PlayerMixin {
     @Inject(method = "setGameMode", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;removeEntitiesOnShoulder()V", shift = At.Shift.AFTER))
     private void playerladder$onGameModeChange(GameType gameType, CallbackInfoReturnable<Boolean> cir) {
-        SharedHandler.onGameModeChange((Player) (Object) this);
-    }
+        SharedHandler.onGameModeChange((Player) (Object) this);    }
 }

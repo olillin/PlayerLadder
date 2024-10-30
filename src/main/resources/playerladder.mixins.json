@@ -1,17 +1,18 @@
 {
-	"required": true,
-	"package": "ru.nern.playerladder.mixin",
-	"compatibilityLevel": "JAVA_21",
-	"mixins": [
-		"PlayerMixin",
-		"ServerPlayerMixin",
-		"shared.EntityMixin",
-		"shared.RideCommandMixin"
-	],
-	"client": [
-		"shared.ProjectileUtilMixin"
-	],
-	"injectors": {
-		"defaultRequire": 1
+  "required": true,
+  "package": "ru.nern.playerladder.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "PlayerMixin",
+    "ServerPlayerMixin",
+    "shared.EntityMixin",
+    "shared.LivingEntityMixin",
+    "shared.RideCommandMixin"
+  ],
+  "client": [
+    "shared.ProjectileUtilMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
 	}
 }

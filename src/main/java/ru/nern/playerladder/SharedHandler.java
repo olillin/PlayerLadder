@@ -14,7 +14,6 @@ import static ru.nern.playerladder.PlayerLadder.CONFIG;
 public class SharedHandler {
     public static InteractionResult startRidingEntity(Player player, Entity newVehicle, Level level, InteractionHand hand) {
         if(!level.isClientSide() && hand == InteractionHand.MAIN_HAND && canRide(newVehicle) && player.getItemInHand(hand).isEmpty()) {
-
             Entity vehicle = getHighestOrSelf(newVehicle, player, CONFIG.server.stepUpLimit);
             if(vehicle == null) return InteractionResult.FAIL;
             player.startRiding(vehicle);
@@ -26,10 +25,9 @@ public class SharedHandler {
 
     public static InteractionResult pickUpEntity(Player player, Entity newPassenger, Level level, InteractionHand hand) {
         if(!level.isClientSide() && hand == InteractionHand.MAIN_HAND && canPickUp(newPassenger) && player.getItemInHand(hand).isEmpty()) {
-
             Entity vehicle = getHighestOrSelf(player, newPassenger, CONFIG.server.pickUpLimit);
             if(vehicle == null) return InteractionResult.FAIL;
-            newPassenger.startRiding(vehicle);
+            newPassenger.startRiding(vehicle, true);
 
             return InteractionResult.SUCCESS;
         }
@@ -56,6 +54,7 @@ public class SharedHandler {
 
     public static void onMount(Entity vehicle, Entity passenger) {
         if(!vehicle.level().isClientSide && vehicle instanceof Player) {
+            LOGGER.info(String.format("onMount %1$s %2$s", vehicle, passenger));
             ((ServerPlayer)vehicle).connection.send(new ClientboundSetPassengersPacket(vehicle));
         }
     }
