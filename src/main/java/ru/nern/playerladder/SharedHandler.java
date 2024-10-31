@@ -54,7 +54,6 @@ public class SharedHandler {
 
     public static void onMount(Entity vehicle, Entity passenger) {
         if(!vehicle.level().isClientSide && vehicle instanceof Player) {
-            LOGGER.info(String.format("onMount %1$s %2$s", vehicle, passenger));
             ((ServerPlayer)vehicle).connection.send(new ClientboundSetPassengersPacket(vehicle));
         }
     }
